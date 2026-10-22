@@ -16,46 +16,48 @@ class AuthActivity : AppCompatActivity() {
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Setup Toolbar dengan Tombol Back (Image 1 Header)
         binding.toolbarAuth.setNavigationOnClickListener {
             finish()
         }
 
         val sharedPref = getSharedPreferences("user_pref", MODE_PRIVATE)
 
-        // Pengecekan otomatis jika isLogin sudah true saat membuka AuthActivity
         val isLogin = sharedPref.getBoolean("isLogin", false)
         if (isLogin) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
             return
+        }
+
+        binding.btnRegister.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
 
         binding.btnlogin.setOnClickListener {
             val username = binding.edtUsername.text.toString().trim()
             val password = binding.edtPassword.text.toString().trim()
 
-            // Pengecekan validasi login Salon Oscardo
-            if (username.isNotEmpty() && password.isNotEmpty() && (username == password || username.lowercase() == "admin")) {
-                val editor = sharedPref.edit()
-                editor.putBoolean("isLogin", true)
-                editor.putString("username", username)
-                editor.apply()
+            val spUsername = sharedPref.getString("reg_username", "") ?: ""
+            val spPassword = sharedPref.getString("reg_password", "") ?: ""
 
-                Toast.makeText(this, "Login Berhasil! Selamat datang di Salon Oscardo, $username", Toast.LENGTH_SHORT).show()
+            val validRule1 = username.isNotEmpty() && password.isNotEmpty() && username == password
+            val validRule2 = username.isNotEmpty() && password.isNotEmpty()
+                    && username == spUsername && password == spPassword
 
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
+            if (validRule1 || validRule2) {
+                sharedPref.edit().apply {
+                    putBoolean("isLogin", true)
+                    putString("username", username)
+                    apply()
+                }
+                Toast.makeText(this, "Login Berhasil! Selamat datang, $username", Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this, MainActivity::class.java))
                 finish()
             } else {
-                // Tampilkan AlertDialog kegagalan login
                 MaterialAlertDialogBuilder(this)
                     .setTitle("Login Gagal")
                     .setMessage("Username dan Password tidak sesuai! Silahkan periksa kembali credential Anda.")
-                    .setPositiveButton("Coba Lagi") { dialog, _ ->
-                        dialog.dismiss()
-                    }
+                    .setPositiveButton("Coba Lagi") { dialog, _ -> dialog.dismiss() }
                     .show()
             }
         }
