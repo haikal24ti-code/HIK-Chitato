@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Scissors Left Blade -->
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M 30,15 L 55,50 L 25,80 C 20,85 10,80 10,72 C 10,65 18,60 25,67 L 45,45 L 30,15 Z" />
+    <!-- Scissors Right Blade -->
+    <path
+        android:fillColor="#D4AF37"
+        android:pathData="M 70,15 L 45,50 L 75,80 C 80,85 90,80 90,72 C 90,65 82,60 75,67 L 55,45 L 70,15 Z" />
+    <!-- Comb -->
+    <path
+        android:fillColor="#C59B27"
+        android:pathData="M 20,35 H 80 V 42 H 20 Z M 22,42 H 25 V 55 H 22 Z M 30,42 H 33 V 55 H 30 Z M 38,42 H 41 V 55 H 38 Z M 46,42 H 49 V 55 H 46 Z M 54,42 H 57 V 55 H 54 Z M 62,42 H 65 V 55 H 62 Z M 70,42 H 73 V 55 H 70 Z M 78,42 H 81 V 55 H 78 Z" />
+</vector>

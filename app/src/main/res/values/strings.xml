@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Salon Oscardo</string>
+    <string name="app_subtitle">Salon Oscardo - Premium Hair &amp; Beauty</string>
+
+    <!-- Titles -->
+    <string name="title_splash">Salon Oscardo</string>
+    <string name="title_login">Login Pengguna</string>
+    <string name="title_main">Salon Oscardo - Premium Hair &amp; Beauty</string>
+    <string name="title_booking">Booking &amp; Layanan Interaktif</string>
+    <string name="title_fourth">Pertemuan 4 - Interactive</string>
+    <string name="title_profile">Profil Developer - Salon Oscardo</string>
+
+    <!-- Bottom Nav Labels -->
+    <string name="nav_layanan">Layanan</string>
+    <string name="nav_web">Web</string>
+    <string name="nav_booking">Booking</string>
+    <string name="nav_profile">Profil</string>
+
+    <!-- Auth -->
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login_text">MASUK KE APLIKASI</string>
+    <string name="forgot_password">Lupa Password?</string>
+    <string name="login_sub_title">Silahkan Login untuk\nMengakses Aplikasi</string>
+
+    <!-- Developer Profile Info (Exact as Image 4) -->
+    <string name="dev_name">Developer: Haikal Andriza</string>
+    <string name="dev_nim">NIM: 2455301078 / Kelas 3 TI E</string>
+    <string name="dev_sosmed">• Sosmed: @haikaland</string>
+    <string name="dev_hobbies">• Hobi: Mobile App Design, Coding, Snack Tasting</string>
+    <string name="dev_hard_skill">• Hard Skill: Complex Problem Solving, Android UI Customization &amp; Kotlin Development</string>
+</resources>

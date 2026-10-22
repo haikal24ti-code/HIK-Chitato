@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Salon Oscardo Premium Palette -->
+    <color name="oscardo_navy_dark">#0A1128</color>
+    <color name="oscardo_navy_medium">#0F1C2E</color>
+    <color name="oscardo_navy_card">#071327</color>
+
+    <color name="oscardo_gold_primary">#C59B27</color>
+    <color name="oscardo_gold_bright">#D4AF37</color>
+    <color name="oscardo_gold_dark">#9A7611</color>
+    <color name="oscardo_gold_light">#F7E7CE</color>
+
+    <color name="oscardo_cream_bg">#F7F4EB</color>
+    <color name="oscardo_card_cream">#FFFDF9</color>
+
+    <color name="oscardo_red_logout">#B71C1C</color>
+    <color name="oscardo_green_price">#1B5E20</color>
+
+    <color name="oscardo_text_dark">#1A1A1A</color>
+    <color name="oscardo_text_gold">#C59B27</color>
+    <color name="oscardo_text_secondary">#666666</color>
+    <color name="oscardo_stroke">#D4AF37</color>
+
+    <!-- Standard Colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>

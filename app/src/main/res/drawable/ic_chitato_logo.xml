@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    <!-- Bag shape background -->
+    <path
+        android:fillColor="#C62828"
+        android:pathData="M 15,10 L 85,10 C 90,10 92,15 90,25 L 82,90 C 81,95 75,98 70,98 L 30,98 C 25,98 19,95 18,90 L 10,25 C 8,15 10,10 15,10 Z" />
+    <!-- Yellow ZigZag Top -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M 10,20 L 20,10 L 30,20 L 40,10 L 50,20 L 60,10 L 70,20 L 80,10 L 90,20 L 88,28 L 12,28 Z" />
+    <!-- Center Potato Chip Badge -->
+    <path
+        android:fillColor="#FFCA28"
+        android:pathData="M 50,38 C 68,38 78,48 78,60 C 78,72 65,82 50,82 C 35,82 22,72 22,60 C 22,48 32,38 50,38 Z" />
+    <!-- Inner Chip Wavy Lines -->
+    <path
+        android:strokeColor="#FF8F00"
+        android:strokeWidth="3"
+        android:pathData="M 32,54 Q 50,48 68,54 M 30,62 Q 50,56 70,62 M 35,70 Q 50,65 65,70" />
+</vector>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/oscardo_cream_bg"
+    android:orientation="vertical"
+    tools:context=".FourthActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_fourth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/oscardo_navy_dark"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="@string/title_booking"
+        app:titleTextColor="@color/oscardo_gold_bright" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Card 1: Intent Data Display -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/oscardo_card_cream"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeColor="@color/oscardo_gold_primary"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Data Intent Booking Diterima:"
+                        android:textColor="@color/oscardo_gold_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_intent_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Name: -"
+                        android:textColor="@color/oscardo_text_dark"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_intent_from"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="From: -"
+                        android:textColor="@color/oscardo_text_dark"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_intent_age"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Age: -"
+                        android:textColor="@color/oscardo_text_dark"
+                        android:textSize="15sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 2: Interactive Controls -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/oscardo_card_cream"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:strokeColor="@color/oscardo_gold_primary"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Komponen Dialog &amp; Status:"
+                        android:textColor="@color/oscardo_gold_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnHowSnackbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="16dp"
+                        android:backgroundTint="@color/oscardo_navy_dark"
+                        android:text="Tampilkan Status Booking (Snackbar)"
+                        android:textColor="@color/oscardo_gold_bright"
+                        app:cornerRadius="10dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnHowAlertDialog"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="12dp"
+                        android:backgroundTint="@color/oscardo_gold_primary"
+                        android:text="Tampilkan Alert Dialog Pembatalan"
+                        android:textColor="@color/oscardo_navy_dark"
+                        android:textStyle="bold"
+                        app:cornerRadius="10dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnBackToMain"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="12dp"
+                        android:text="Kembali ke Main Activity"
+                        android:textColor="@color/oscardo_navy_dark"
+                        app:cornerRadius="10dp"
+                        app:strokeColor="@color/oscardo_navy_dark" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

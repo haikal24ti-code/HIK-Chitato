@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/oscardo_navy_dark"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <!-- Circle Profile Header (Image 4) -->
+        <FrameLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/ic_home"
+            android:backgroundTint="@color/oscardo_gold_primary"
+            android:padding="3dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/oscardo_navy_dark"
+                android:contentDescription="@string/dev_name"
+                android:padding="16dp"
+                android:src="@drawable/ic_profile"
+                app:tint="@color/oscardo_gold_bright" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_profile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/dev_name"
+            android:textColor="@color/oscardo_gold_bright"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_profile_nim"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/dev_nim"
+            android:textColor="@color/oscardo_gold_light"
+            android:textSize="15sp" />
+
+        <!-- Info Box (Image 4) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="@color/oscardo_navy_card"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:strokeColor="@color/oscardo_stroke"
+            app:strokeWidth="1.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Informasi Developer"
+                    android:textColor="@color/oscardo_gold_bright"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_profile_sosmed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/dev_sosmed"
+                    android:textColor="@color/oscardo_gold_light"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_profile_hobbies"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/dev_hobbies"
+                    android:textColor="@color/oscardo_gold_light"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_profile_hard_skill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/dev_hard_skill"
+                    android:textColor="@color/oscardo_gold_light"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Red Logout Button (Image 4) -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_logout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:backgroundTint="@color/oscardo_red_logout"
+            android:text="LOGOUT DARI APLIKASI"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_logout"
+            app:iconTint="@color/white"
+            app:strokeColor="@color/white"
+            app:strokeWidth="1dp" />
+
+    </LinearLayout>
+</ScrollView>
