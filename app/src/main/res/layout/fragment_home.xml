@@ -90,6 +90,25 @@
             app:icon="@drawable/ic_interactive"
             app:iconTint="@color/white" />
 
+        <!-- Fitur Baru 1: Search Bar untuk Filter Katalog Layanan Salon -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="@color/oscardo_card_cream"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:strokeColor="@color/oscardo_gold_primary"
+            app:strokeWidth="1dp">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view_service"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:iconifiedByDefault="false"
+                app:queryHint="Cari layanan salon (misal: Potong, Hair)..." />
+        </com.google.android.material.card.MaterialCardView>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -287,6 +306,19 @@
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <!-- Empty State Teks jika pencarian layanan tidak ditemukan -->
+        <TextView
+            android:id="@+id/tv_empty_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:text="Layanan salon yang Anda cari tidak ditemukan."
+            android:textColor="@color/oscardo_text_secondary"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
     </LinearLayout>
 </ScrollView>

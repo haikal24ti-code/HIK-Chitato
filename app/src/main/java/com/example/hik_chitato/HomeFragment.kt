@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import com.example.hik_chitato.databinding.FragmentHomeBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -58,6 +59,42 @@ class HomeFragment : Fragment() {
         binding.cardService3.setOnClickListener {
             Toast.makeText(requireContext(), "Anda memilih: Creambath Premium (Rp 85.000)", Toast.LENGTH_SHORT).show()
         }
+
+        // Fitur Baru 1: Fitur Pencarian / Filter Katalog Layanan Real-time
+        setupSearchFilter()
+    }
+
+    private fun setupSearchFilter() {
+        binding.searchViewService.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                filterServices(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterServices(newText)
+                return true
+            }
+        })
+    }
+
+    private fun filterServices(query: String?) {
+        val q = query?.trim()?.lowercase().orEmpty()
+
+        val service1Text = "potong rambut gentleman guntingan modern dan stylish untuk pria sejati rp 50.000"
+        val service2Text = "hair coloring & highlight teknik pewarnaan rambut terkini untuk warna cerah dan highlights natural rp 150.000"
+        val service3Text = "creambath premium perawatan rambut mendalam dengan krim pilihan dan pijatan relaksasi rp 85.000"
+
+        val match1 = q.isEmpty() || service1Text.contains(q)
+        val match2 = q.isEmpty() || service2Text.contains(q)
+        val match3 = q.isEmpty() || service3Text.contains(q)
+
+        binding.cardService1.visibility = if (match1) View.VISIBLE else View.GONE
+        binding.cardService2.visibility = if (match2) View.VISIBLE else View.GONE
+        binding.cardService3.visibility = if (match3) View.VISIBLE else View.GONE
+
+        val noResults = !match1 && !match2 && !match3
+        binding.tvEmptySearch.visibility = if (noResults) View.VISIBLE else View.GONE
     }
 
     override fun onDestroyView() {
