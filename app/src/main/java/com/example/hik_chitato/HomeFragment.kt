@@ -5,9 +5,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.hik_chitato.databinding.FragmentHomeBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -15,6 +17,9 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var customAdapter: CustomAdapter
+    private lateinit var allServices: List<SalonService>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,7 +33,14 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Button Buka Website Official Salon (Image 2)
+        setupQuickActionButtons()
+        setupHomeGridRecyclerView()
+        setupServicesCustomAdapter()
+        setupSearchFilter()
+    }
+
+    private fun setupQuickActionButtons() {
+        // Tombol Buka Website Official Salon Oscardo
         binding.btnOpenWeb.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Website Official Salon Oscardo")
@@ -37,64 +49,171 @@ class HomeFragment : Fragment() {
                 .show()
         }
 
-        // Button Demo (Image 2) -> Meluncurkan FourthActivity dengan Intent Extras
+        // Tombol Demo -> Intent ke FourthActivity
         binding.btnOpenFourth.setOnClickListener {
             val intent = Intent(requireContext(), FourthActivity::class.java).apply {
-                putExtra("name", "Politeknik Caltex Riau")
-                putExtra("from", "Rumbai")
+                putExtra("name", "Politeknik Caltex Rumbai")
+                putExtra("from", "Salon Oscardo")
                 putExtra("age", 25)
             }
             startActivity(intent)
         }
+    }
 
-        // Click listeners for Salon Services (Image 2)
-        binding.cardService1.setOnClickListener {
-            Toast.makeText(requireContext(), "Anda memilih: Potong Rambut Gentleman (Rp 50.000)", Toast.LENGTH_SHORT).show()
+    private fun setupHomeGridRecyclerView() {
+        val menuList = listOf(
+            HomeMenuItem(
+                id = 1,
+                title = "Layanan Salon",
+                subtitle = "Katalog & perawatan",
+                iconResId = R.drawable.ic_scissors
+            ),
+            HomeMenuItem(
+                id = 2,
+                title = "Booking",
+                subtitle = "Jadwalkan perawatan",
+                iconResId = R.drawable.ic_interactive
+            ),
+            HomeMenuItem(
+                id = 3,
+                title = "Produk Salon",
+                subtitle = "Produk kecantikan",
+                iconResId = R.drawable.ic_creambath
+            ),
+            HomeMenuItem(
+                id = 4,
+                title = "Informasi Salon",
+                subtitle = "Lokasi, jam & kontak",
+                iconResId = R.drawable.ic_web
+            )
+        )
+
+        val gridAdapter = HomeMenuAdapter(menuList) { item ->
+            when (item.id) {
+                1 -> {
+                    Toast.makeText(requireContext(), "Menampilkan Katalog Layanan Salon", Toast.LENGTH_SHORT).show()
+                    binding.scrollViewHome.smoothScrollTo(0, binding.tvCatalogHeader.top)
+                }
+                2 -> {
+                    val intent = Intent(requireContext(), FourthActivity::class.java).apply {
+                        putExtra("name", "Politeknik Caltex Rumbai")
+                        putExtra("from", "Booking Menu")
+                        putExtra("age", 25)
+                    }
+                    startActivity(intent)
+                }
+                3 -> {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Produk Salon Oscardo")
+                        .setMessage("Katalog Produk Premium Oscardo:\n\n1. Hair Serum Gold Edition - Rp120.000\n2. Oscardo Care Shampoo - Rp75.000\n3. Hair Spa Mask Avocado - Rp95.000")
+                        .setPositiveButton("Tutup") { dialog, _ -> dialog.dismiss() }
+                        .show()
+                }
+                4 -> {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Informasi Salon Oscardo")
+                        .setMessage("Salon Oscardo Premium\n📍 Lokasi: Rumbai, Pekanbaru\n⏰ Jam Operasional: 09.00 - 21.00 WIB\n📞 Kontak/WA: +62 812-3456-7890")
+                        .setPositiveButton("Tutup") { dialog, _ -> dialog.dismiss() }
+                        .show()
+                }
+            }
         }
 
-        binding.cardService2.setOnClickListener {
-            Toast.makeText(requireContext(), "Anda memilih: Hair Coloring & Highlight (Rp 150.000)", Toast.LENGTH_SHORT).show()
+        binding.rvHomeGrid.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.rvHomeGrid.adapter = gridAdapter
+    }
+
+    private fun setupServicesCustomAdapter() {
+        allServices = listOf(
+            SalonService(
+                id = 1,
+                name = "Potong Rambut Gentleman",
+                description = "Guntingan modern dan stylish untuk pria sejati.",
+                price = "Rp 50.000",
+                iconResId = R.drawable.ic_scissors
+            ),
+            SalonService(
+                id = 2,
+                name = "Hair Coloring & Highlight",
+                description = "Teknik pewarnaan rambut terkini untuk warna cerah dan highlights natural.",
+                price = "Rp 150.000",
+                iconResId = R.drawable.ic_hair_color
+            ),
+            SalonService(
+                id = 3,
+                name = "Creambath Premium",
+                description = "Perawatan rambut mendalam dengan krim pilihan dan pijatan relaksasi.",
+                price = "Rp 85.000",
+                iconResId = R.drawable.ic_creambath
+            ),
+            SalonService(
+                id = 4,
+                name = "Hair Styling & Wash",
+                description = "Cuci rambut bersih dan styling profesional sesuai keinginan Anda.",
+                price = "Rp 40.000",
+                iconResId = R.drawable.ic_salon_scissors_comb
+            ),
+            SalonService(
+                id = 5,
+                name = "Facial & Hair Spa Treatment",
+                description = "Perawatan wajah dan hair spa komplit untuk kesegaran maksimal.",
+                price = "Rp 120.000",
+                iconResId = R.drawable.ic_snack_chip
+            )
+        )
+
+        customAdapter = CustomAdapter(requireContext(), allServices) { service ->
+            Toast.makeText(
+                requireContext(),
+                "Anda memilih: ${service.name} (${service.price})",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
-        binding.cardService3.setOnClickListener {
-            Toast.makeText(requireContext(), "Anda memilih: Creambath Premium (Rp 85.000)", Toast.LENGTH_SHORT).show()
+        binding.listViewServices.adapter = customAdapter
+        binding.listViewServices.post {
+            setListViewHeightBasedOnChildren(binding.listViewServices)
         }
-
-        // Fitur Baru 1: Fitur Pencarian / Filter Katalog Layanan Real-time
-        setupSearchFilter()
     }
 
     private fun setupSearchFilter() {
         binding.searchViewService.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                filterServices(query)
+                performFilter(query)
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                filterServices(newText)
+                performFilter(newText)
                 return true
             }
         })
     }
 
-    private fun filterServices(query: String?) {
-        val q = query?.trim()?.lowercase().orEmpty()
+    private fun performFilter(query: String?) {
+        customAdapter.filter(query)
+        setListViewHeightBasedOnChildren(binding.listViewServices)
 
-        val service1Text = "potong rambut gentleman guntingan modern dan stylish untuk pria sejati rp 50.000"
-        val service2Text = "hair coloring & highlight teknik pewarnaan rambut terkini untuk warna cerah dan highlights natural rp 150.000"
-        val service3Text = "creambath premium perawatan rambut mendalam dengan krim pilihan dan pijatan relaksasi rp 85.000"
-
-        val match1 = q.isEmpty() || service1Text.contains(q)
-        val match2 = q.isEmpty() || service2Text.contains(q)
-        val match3 = q.isEmpty() || service3Text.contains(q)
-
-        binding.cardService1.visibility = if (match1) View.VISIBLE else View.GONE
-        binding.cardService2.visibility = if (match2) View.VISIBLE else View.GONE
-        binding.cardService3.visibility = if (match3) View.VISIBLE else View.GONE
-
-        val noResults = !match1 && !match2 && !match3
+        val noResults = customAdapter.count == 0
         binding.tvEmptySearch.visibility = if (noResults) View.VISIBLE else View.GONE
+    }
+
+    private fun setListViewHeightBasedOnChildren(listView: ListView) {
+        val listAdapter = listView.adapter ?: return
+        var totalHeight = 0
+        val desiredWidth = View.MeasureSpec.makeMeasureSpec(
+            listView.width.coerceAtLeast(1),
+            View.MeasureSpec.UNSPECIFIED
+        )
+        for (i in 0 until listAdapter.count) {
+            val listItem = listAdapter.getView(i, null, listView)
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED)
+            totalHeight += listItem.measuredHeight
+        }
+        val params = listView.layoutParams
+        params.height = totalHeight + (listView.dividerHeight * (listAdapter.count - 1).coerceAtLeast(0))
+        listView.layoutParams = params
+        listView.requestLayout()
     }
 
     override fun onDestroyView() {

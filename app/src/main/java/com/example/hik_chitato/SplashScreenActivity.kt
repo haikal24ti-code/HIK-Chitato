@@ -21,19 +21,18 @@ class SplashScreenActivity : AppCompatActivity() {
             // Delay 2 detik untuk branding Splash Screen Salon Oscardo
             delay(2000)
 
-            // Pengecekan status login di SharedPreferences
+            // Pengecekan status onboarding & login di SharedPreferences
             val sharedPref = getSharedPreferences("user_pref", MODE_PRIVATE)
+            val isOnboardingCompleted = sharedPref.getBoolean("is_onboarding_completed", false)
             val isLogin = sharedPref.getBoolean("isLogin", false)
 
-            if (isLogin) {
-                // Flow Code: Jika sudah login -> MainActivity
-                val intent = Intent(this@SplashScreenActivity, MainActivity::class.java)
-                startActivity(intent)
-            } else {
-                // Flow Code: Jika belum login -> AuthActivity
-                val intent = Intent(this@SplashScreenActivity, AuthActivity::class.java)
-                startActivity(intent)
+            val intent = when {
+                !isOnboardingCompleted -> Intent(this@SplashScreenActivity, OnboardingActivity::class.java)
+                isLogin -> Intent(this@SplashScreenActivity, MainActivity::class.java)
+                else -> Intent(this@SplashScreenActivity, AuthActivity::class.java)
             }
+
+            startActivity(intent)
             finish()
         }
     }
