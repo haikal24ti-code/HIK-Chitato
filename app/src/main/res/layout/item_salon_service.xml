@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_service_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="@color/oscardo_card_cream"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="3dp"
+    app:strokeColor="@color/oscardo_gold_primary"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/img_service_icon"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/ic_home"
+            android:backgroundTint="@color/oscardo_gold_primary"
+            android:contentDescription="Layanan Salon"
+            android:padding="12dp"
+            android:src="@drawable/ic_scissors" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_service_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nama Layanan"
+                android:textColor="@color/oscardo_text_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_service_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Deskripsi singkat layanan salon."
+                android:textColor="@color/oscardo_text_secondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tv_service_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Rp 0"
+                android:textColor="@color/oscardo_green_price"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginBottom="32dp"
+        app:cardBackgroundColor="@color/oscardo_navy_medium"
+        app:cardCornerRadius="110dp"
+        app:cardElevation="8dp"
+        app:strokeColor="@color/oscardo_gold_bright"
+        app:strokeWidth="2dp">
+
+        <ImageView
+            android:id="@+id/img_onboarding"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:contentDescription="Onboarding Illustration"
+            android:src="@drawable/ic_salon_scissors_comb" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/tv_onboarding_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_oscardo_button_navy"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="6dp"
+        android:text="SALON OSCARDO"
+        android:textColor="@color/oscardo_gold_bright"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_onboarding_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:text="Judul Onboarding"
+        android:textColor="@color/oscardo_gold_bright"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_onboarding_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:paddingHorizontal="16dp"
+        android:text="Deskripsi penjelasan mengenai fitur atau keunggulan Salon Oscardo."
+        android:textColor="@color/oscardo_gold_light"
+        android:textSize="14sp" />
+
+</LinearLayout>
