@@ -8,13 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.example.hik_chitato.data.repository.AuthRepository
 import com.example.hik_chitato.databinding.FragmentProfileBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    private val authRepository = AuthRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,28 +38,30 @@ class ProfileFragment : Fragment() {
         binding.tvProfileName.text = getString(R.string.dev_name)
         binding.tvProfileNim.text = getString(R.string.dev_nim)
 
-        // Fitur Baru 2: Rating & Ulasan Layanan Salon (RatingBar + SharedPreferences)
+        // Fitur Rating & Ulasan Layanan Salon
         setupRatingAndReview()
 
-        // Logout Feature
+        // Logout Feature (Supabase Auth signOut)
         binding.btnLogout.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Konfirmasi Logout")
                 .setMessage("Apakah Anda yakin ingin keluar dari akun Salon Oscardo dan kembali ke Halaman Login?")
                 .setPositiveButton("Ya") { _, _ ->
-                    // Clear SharedPreferences Status Login
-                    val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
-                    val editor = sharedPref.edit()
-                    editor.remove("isLogin")
-                    editor.apply()
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        authRepository.signOut()
 
-                    Toast.makeText(requireContext(), "Berhasil Logout dari Salon Oscardo", Toast.LENGTH_SHORT).show()
+                        withContext(Dispatchers.Main) {
+                            val sharedPref = requireContext().getSharedPreferences("user_pref", Context.MODE_PRIVATE)
+                            sharedPref.edit().remove("isLogin").remove("username").apply()
 
-                    // Redirect ke AuthActivity
-                    val intent = Intent(requireContext(), AuthActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    requireActivity().finish()
+                            Toast.makeText(requireContext(), "Berhasil Logout dari Salon Oscardo", Toast.LENGTH_SHORT).show()
+
+                            val intent = Intent(requireContext(), AuthActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            requireActivity().finish()
+                        }
+                    }
                 }
                 .setNegativeButton("Batal") { dialog, _ ->
                     dialog.dismiss()
@@ -65,7 +73,6 @@ class ProfileFragment : Fragment() {
     private fun setupRatingAndReview() {
         val reviewPref = requireContext().getSharedPreferences("review_pref", Context.MODE_PRIVATE)
 
-        // Load data rating & ulasan tersimpan
         val savedRating = reviewPref.getFloat("saved_rating", 0f)
         val savedReview = reviewPref.getString("saved_review", "") ?: ""
 
@@ -84,7 +91,6 @@ class ProfileFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Simpan ke SharedPreferences
             reviewPref.edit().apply {
                 putFloat("saved_rating", rating)
                 putString("saved_review", reviewText)

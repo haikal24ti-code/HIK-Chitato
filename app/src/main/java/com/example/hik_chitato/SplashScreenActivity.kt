@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.hik_chitato.data.repository.AuthRepository
 import com.example.hik_chitato.databinding.ActivitySplashScreenBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -11,6 +12,7 @@ import kotlinx.coroutines.launch
 class SplashScreenActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySplashScreenBinding
+    private val authRepository = AuthRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,10 +23,10 @@ class SplashScreenActivity : AppCompatActivity() {
             // Delay 2 detik untuk branding Splash Screen Salon Oscardo
             delay(2000)
 
-            // Pengecekan status onboarding & login di SharedPreferences
+            // Pengecekan status onboarding & login di SharedPreferences / Supabase
             val sharedPref = getSharedPreferences("user_pref", MODE_PRIVATE)
             val isOnboardingCompleted = sharedPref.getBoolean("is_onboarding_completed", false)
-            val isLogin = sharedPref.getBoolean("isLogin", false)
+            val isLogin = authRepository.isUserLoggedIn() || sharedPref.getBoolean("isLogin", false)
 
             val intent = when {
                 !isOnboardingCompleted -> Intent(this@SplashScreenActivity, OnboardingActivity::class.java)

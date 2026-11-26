@@ -2,14 +2,21 @@ package com.example.hik_chitato
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.hik_chitato.data.repository.AuthRepository
 import com.example.hik_chitato.databinding.ActivityAuthBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding
+    private val authRepository = AuthRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,8 +29,8 @@ class AuthActivity : AppCompatActivity() {
 
         val sharedPref = getSharedPreferences("user_pref", MODE_PRIVATE)
 
-        val isLogin = sharedPref.getBoolean("isLogin", false)
-        if (isLogin) {
+        // Pengecekan status login di Supabase Auth / SharedPreferences
+        if (authRepository.isUserLoggedIn() || sharedPref.getBoolean("isLogin", false)) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
             return
@@ -34,31 +41,53 @@ class AuthActivity : AppCompatActivity() {
         }
 
         binding.btnlogin.setOnClickListener {
-            val username = binding.edtUsername.text.toString().trim()
+            val inputEmail = binding.edtUsername.text.toString().trim()
             val password = binding.edtPassword.text.toString().trim()
 
-            val spUsername = sharedPref.getString("reg_username", "") ?: ""
-            val spPassword = sharedPref.getString("reg_password", "") ?: ""
+            if (inputEmail.isEmpty()) {
+                binding.tilUsername.error = "Email tidak boleh kosong"
+                return@setOnClickListener
+            } else binding.tilUsername.error = null
 
-            val validRule1 = username.isNotEmpty() && password.isNotEmpty() && username == password
-            val validRule2 = username.isNotEmpty() && password.isNotEmpty()
-                    && username == spUsername && password == spPassword
+            if (password.isEmpty()) {
+                binding.tilPassword.error = "Password tidak boleh kosong"
+                return@setOnClickListener
+            } else binding.tilPassword.error = null
 
-            if (validRule1 || validRule2) {
-                sharedPref.edit().apply {
-                    putBoolean("isLogin", true)
-                    putString("username", username)
-                    apply()
+            binding.btnlogin.isEnabled = false
+            binding.btnRegister.isEnabled = false
+
+            lifecycleScope.launch(Dispatchers.IO) {
+                val result = authRepository.signIn(inputEmail, password)
+
+                withContext(Dispatchers.Main) {
+                    binding.btnlogin.isEnabled = true
+                    binding.btnRegister.isEnabled = true
+
+                    result.fold(
+                        onSuccess = {
+                            sharedPref.edit().apply {
+                                putBoolean("isLogin", true)
+                                putString("username", inputEmail)
+                                apply()
+                            }
+                            Toast.makeText(
+                                this@AuthActivity,
+                                "Login Berhasil! Selamat datang di Salon Oscardo",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            startActivity(Intent(this@AuthActivity, MainActivity::class.java))
+                            finish()
+                        },
+                        onFailure = { error ->
+                            MaterialAlertDialogBuilder(this@AuthActivity)
+                                .setTitle("Login Gagal")
+                                .setMessage("Email atau Password tidak sesuai dengan data di Supabase Auth! (${error.localizedMessage ?: "Periksa credential & koneksi Anda"})")
+                                .setPositiveButton("Coba Lagi") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                        }
+                    )
                 }
-                Toast.makeText(this, "Login Berhasil! Selamat datang, $username", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this, MainActivity::class.java))
-                finish()
-            } else {
-                MaterialAlertDialogBuilder(this)
-                    .setTitle("Login Gagal")
-                    .setMessage("Username dan Password tidak sesuai! Silahkan periksa kembali credential Anda.")
-                    .setPositiveButton("Coba Lagi") { dialog, _ -> dialog.dismiss() }
-                    .show()
             }
         }
     }

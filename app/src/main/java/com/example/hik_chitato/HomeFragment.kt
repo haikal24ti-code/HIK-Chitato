@@ -2,16 +2,24 @@ package com.example.hik_chitato
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.hik_chitato.data.repository.SalonServiceRepository
 import com.example.hik_chitato.databinding.FragmentHomeBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
 
@@ -19,7 +27,8 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var customAdapter: CustomAdapter
-    private lateinit var allServices: List<SalonService>
+    private val serviceRepository = SalonServiceRepository()
+    private var allServices: MutableList<SalonService> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,10 +46,16 @@ class HomeFragment : Fragment() {
         setupHomeGridRecyclerView()
         setupServicesCustomAdapter()
         setupSearchFilter()
+
+        binding.btnAddService.setOnClickListener {
+            showAddServiceDialog()
+        }
+
+        // Load data dari Supabase Database
+        loadServicesFromSupabase()
     }
 
     private fun setupQuickActionButtons() {
-        // Tombol Buka Website Official Salon Oscardo
         binding.btnOpenWeb.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Website Official Salon Oscardo")
@@ -49,7 +64,6 @@ class HomeFragment : Fragment() {
                 .show()
         }
 
-        // Tombol Demo -> Intent ke FourthActivity
         binding.btnOpenFourth.setOnClickListener {
             val intent = Intent(requireContext(), FourthActivity::class.java).apply {
                 putExtra("name", "Politeknik Caltex Rumbai")
@@ -124,56 +138,219 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupServicesCustomAdapter() {
-        allServices = listOf(
-            SalonService(
-                id = 1,
-                name = "Potong Rambut Gentleman",
-                description = "Guntingan modern dan stylish untuk pria sejati.",
-                price = "Rp 50.000",
-                iconResId = R.drawable.ic_scissors
-            ),
-            SalonService(
-                id = 2,
-                name = "Hair Coloring & Highlight",
-                description = "Teknik pewarnaan rambut terkini untuk warna cerah dan highlights natural.",
-                price = "Rp 150.000",
-                iconResId = R.drawable.ic_hair_color
-            ),
-            SalonService(
-                id = 3,
-                name = "Creambath Premium",
-                description = "Perawatan rambut mendalam dengan krim pilihan dan pijatan relaksasi.",
-                price = "Rp 85.000",
-                iconResId = R.drawable.ic_creambath
-            ),
-            SalonService(
-                id = 4,
-                name = "Hair Styling & Wash",
-                description = "Cuci rambut bersih dan styling profesional sesuai keinginan Anda.",
-                price = "Rp 40.000",
-                iconResId = R.drawable.ic_salon_scissors_comb
-            ),
-            SalonService(
-                id = 5,
-                name = "Facial & Hair Spa Treatment",
-                description = "Perawatan wajah dan hair spa komplit untuk kesegaran maksimal.",
-                price = "Rp 120.000",
-                iconResId = R.drawable.ic_snack_chip
-            )
-        )
-
         customAdapter = CustomAdapter(requireContext(), allServices) { service ->
-            Toast.makeText(
-                requireContext(),
-                "Anda memilih: ${service.name} (${service.price})",
-                Toast.LENGTH_SHORT
-            ).show()
+            showServiceActionOptions(service)
+        }
+        binding.listViewServices.adapter = customAdapter
+    }
+
+    private fun loadServicesFromSupabase() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val result = serviceRepository.getAllServices()
+
+            withContext(Dispatchers.Main) {
+                result.fold(
+                    onSuccess = { supabaseList ->
+                        if (supabaseList.isEmpty()) {
+                            // Seed data awal jika tabel salon_services di Supabase masih kosong
+                            seedDefaultServices()
+                        } else {
+                            allServices.clear()
+                            supabaseList.forEachIndexed { index, item ->
+                                val iconRes = getIconForServiceName(item.name)
+                                val formattedPrice = "Rp %,d".format(item.price.toLong()).replace(',', '.')
+                                allServices.add(
+                                    SalonService(
+                                        id = index + 1,
+                                        dbId = item.id,
+                                        name = item.name,
+                                        description = item.description,
+                                        price = formattedPrice,
+                                        iconResId = iconRes
+                                    )
+                                )
+                            }
+                            customAdapter.updateData(allServices)
+                            setListViewHeightBasedOnChildren(binding.listViewServices)
+                        }
+                    },
+                    onFailure = { error ->
+                        Toast.makeText(requireContext(), "Gagal memuat layanan dari Supabase: ${error.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            }
+        }
+    }
+
+    private fun seedDefaultServices() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            serviceRepository.createService("Potong Rambut Gentleman", "Guntingan modern dan stylish untuk pria sejati.", 50000.0)
+            serviceRepository.createService("Hair Coloring & Highlight", "Teknik pewarnaan rambut terkini untuk warna cerah dan highlights natural.", 150000.0)
+            serviceRepository.createService("Creambath Premium", "Perawatan rambut mendalam dengan krim pilihan dan pijatan relaksasi.", 85000.0)
+
+            withContext(Dispatchers.Main) {
+                loadServicesFromSupabase()
+            }
+        }
+    }
+
+    private fun getIconForServiceName(name: String): Int {
+        val lower = name.lowercase()
+        return when {
+            lower.contains("color") || lower.contains("pewarnaan") -> R.drawable.ic_hair_color
+            lower.contains("cream") || lower.contains("spa") -> R.drawable.ic_creambath
+            lower.contains("style") || lower.contains("wash") -> R.drawable.ic_salon_scissors_comb
+            else -> R.drawable.ic_scissors
+        }
+    }
+
+    private fun showAddServiceDialog() {
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(40, 20, 40, 10)
         }
 
-        binding.listViewServices.adapter = customAdapter
-        binding.listViewServices.post {
-            setListViewHeightBasedOnChildren(binding.listViewServices)
+        val edtName = EditText(requireContext()).apply {
+            hint = "Nama Layanan"
         }
+        val edtDesc = EditText(requireContext()).apply {
+            hint = "Deskripsi Layanan"
+        }
+        val edtPrice = EditText(requireContext()).apply {
+            hint = "Harga (contoh: 50000)"
+            inputType = InputType.TYPE_CLASS_NUMBER
+        }
+
+        layout.addView(edtName)
+        layout.addView(edtDesc)
+        layout.addView(edtPrice)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Tambah Layanan Salon Baru")
+            .setView(layout)
+            .setPositiveButton("Simpan (Supabase)") { _, _ ->
+                val name = edtName.text.toString().trim()
+                val desc = edtDesc.text.toString().trim()
+                val priceDouble = edtPrice.text.toString().toDoubleOrNull() ?: 0.0
+
+                if (name.isNotEmpty() && priceDouble > 0.0) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val res = serviceRepository.createService(name, desc, priceDouble)
+                        withContext(Dispatchers.Main) {
+                            res.fold(
+                                onSuccess = {
+                                    Toast.makeText(requireContext(), "Layanan berhasil ditambahkan ke Supabase!", Toast.LENGTH_SHORT).show()
+                                    loadServicesFromSupabase()
+                                },
+                                onFailure = { err ->
+                                    Toast.makeText(requireContext(), "Gagal menyimpan: ${err.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Nama dan Harga harus diisi dengan benar!", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Batal") { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun showServiceActionOptions(service: SalonService) {
+        val options = arrayOf("Edit Layanan (Update Supabase)", "Hapus Layanan (Delete Supabase)")
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(service.name)
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> showEditServiceDialog(service)
+                    1 -> confirmDeleteService(service)
+                }
+            }
+            .setNegativeButton("Tutup") { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun showEditServiceDialog(service: SalonService) {
+        val dbId = service.dbId ?: return
+
+        val layout = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(40, 20, 40, 10)
+        }
+
+        val rawPrice = service.price.replace("[^0-9]".toRegex(), "")
+
+        val edtName = EditText(requireContext()).apply {
+            hint = "Nama Layanan"
+            setText(service.name)
+        }
+        val edtDesc = EditText(requireContext()).apply {
+            hint = "Deskripsi Layanan"
+            setText(service.description)
+        }
+        val edtPrice = EditText(requireContext()).apply {
+            hint = "Harga"
+            inputType = InputType.TYPE_CLASS_NUMBER
+            setText(rawPrice)
+        }
+
+        layout.addView(edtName)
+        layout.addView(edtDesc)
+        layout.addView(edtPrice)
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Edit Layanan Salon")
+            .setView(layout)
+            .setPositiveButton("Update (Supabase)") { _, _ ->
+                val name = edtName.text.toString().trim()
+                val desc = edtDesc.text.toString().trim()
+                val priceDouble = edtPrice.text.toString().toDoubleOrNull() ?: 0.0
+
+                if (name.isNotEmpty() && priceDouble > 0.0) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val res = serviceRepository.updateService(dbId, name, desc, priceDouble)
+                        withContext(Dispatchers.Main) {
+                            res.fold(
+                                onSuccess = {
+                                    Toast.makeText(requireContext(), "Layanan berhasil diperbarui di Supabase!", Toast.LENGTH_SHORT).show()
+                                    loadServicesFromSupabase()
+                                },
+                                onFailure = { err ->
+                                    Toast.makeText(requireContext(), "Gagal memperbarui: ${err.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+            .setNegativeButton("Batal") { d, _ -> d.dismiss() }
+            .show()
+    }
+
+    private fun confirmDeleteService(service: SalonService) {
+        val dbId = service.dbId ?: return
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Konfirmasi Hapus Layanan")
+            .setMessage("Apakah Anda yakin ingin menghapus layanan \"${service.name}\" dari database Supabase?")
+            .setPositiveButton("Hapus") { _, _ ->
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val res = serviceRepository.deleteService(dbId)
+                    withContext(Dispatchers.Main) {
+                        res.fold(
+                            onSuccess = {
+                                Toast.makeText(requireContext(), "Layanan berhasil dihapus dari Supabase!", Toast.LENGTH_SHORT).show()
+                                loadServicesFromSupabase()
+                            },
+                            onFailure = { err ->
+                                Toast.makeText(requireContext(), "Gagal menghapus: ${err.localizedMessage}", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
+                }
+            }
+            .setNegativeButton("Batal") { d, _ -> d.dismiss() }
+            .show()
     }
 
     private fun setupSearchFilter() {
